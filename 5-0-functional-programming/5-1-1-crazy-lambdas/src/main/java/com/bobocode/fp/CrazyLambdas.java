@@ -4,7 +4,10 @@ import com.bobocode.util.ExerciseNotCompletedException;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.*;
+
+import static java.util.function.IntUnaryOperator.*;
 
 /**
  * {@link CrazyLambdas} is an exercise class. Each method returns a functional interface and it should be implemented
@@ -26,7 +29,7 @@ public class CrazyLambdas {
      * @return a string supplier
      */
     public static Supplier<String> helloSupplier() {
-        throw new ExerciseNotCompletedException();
+        return () -> "Hello";
     }
 
     /**
@@ -35,7 +38,7 @@ public class CrazyLambdas {
      * @return a string predicate
      */
     public static Predicate<String> isEmptyPredicate() {
-        throw new ExerciseNotCompletedException();
+        return String::isEmpty;
     }
 
     /**
@@ -44,8 +47,10 @@ public class CrazyLambdas {
      *
      * @return function that repeats Strings
      */
+    //todo: looks as a static method call
     public static BiFunction<String, Integer, String> stringMultiplier() {
-        throw new ExerciseNotCompletedException();
+//        return (str, n) -> str.repeat(n);
+        return String::repeat;
     }
 
     /**
@@ -55,7 +60,7 @@ public class CrazyLambdas {
      * @return function that converts adds dollar sign
      */
     public static Function<BigDecimal, String> toDollarStringFunction() {
-        throw new ExerciseNotCompletedException();
+        return bigDecimal -> "$" + bigDecimal;
     }
 
     /**
@@ -67,7 +72,7 @@ public class CrazyLambdas {
      * @return a string predicate
      */
     public static Predicate<String> lengthInRangePredicate(int min, int max) {
-        throw new ExerciseNotCompletedException();
+        return str -> str.length() >= min && str.length() < max;
     }
 
     /**
@@ -76,7 +81,7 @@ public class CrazyLambdas {
      * @return int supplier
      */
     public static IntSupplier randomIntSupplier() {
-        throw new ExerciseNotCompletedException();
+        return () -> ThreadLocalRandom.current().nextInt();
     }
 
 
@@ -86,7 +91,7 @@ public class CrazyLambdas {
      * @return int operation
      */
     public static IntUnaryOperator boundedRandomIntSupplier() {
-        throw new ExerciseNotCompletedException();
+        return i -> ThreadLocalRandom.current().nextInt(i);
     }
 
     /**
@@ -95,7 +100,7 @@ public class CrazyLambdas {
      * @return square operation
      */
     public static IntUnaryOperator intSquareOperation() {
-        throw new ExerciseNotCompletedException();
+        return i -> i * i;
     }
 
     /**
@@ -104,7 +109,7 @@ public class CrazyLambdas {
      * @return binary sum operation
      */
     public static LongBinaryOperator longSumOperation() {
-        throw new ExerciseNotCompletedException();
+        return (l1, l2) -> l1 + l2;
     }
 
     /**
@@ -113,7 +118,7 @@ public class CrazyLambdas {
      * @return string to int converter
      */
     public static ToIntFunction<String> stringToIntConverter() {
-        throw new ExerciseNotCompletedException();
+        return str -> Integer.valueOf(str);
     }
 
     /**
@@ -124,7 +129,7 @@ public class CrazyLambdas {
      * @return a function supplier
      */
     public static Supplier<IntUnaryOperator> nMultiplyFunctionSupplier(int n) {
-        throw new ExerciseNotCompletedException();
+        return () -> x -> x * n;
     }
 
     /**
@@ -133,7 +138,7 @@ public class CrazyLambdas {
      * @return function that composes functions with trim() function
      */
     public static UnaryOperator<Function<String, String>> composeWithTrimFunction() {
-        throw new ExerciseNotCompletedException();
+        return function -> function.compose((String s) -> s.trim());
     }
 
     /**
@@ -144,7 +149,11 @@ public class CrazyLambdas {
      * @return a thread supplier
      */
     public static Supplier<Thread> runningThreadSupplier(Runnable runnable) {
-        throw new ExerciseNotCompletedException();
+        return () -> {
+            Thread thread = new Thread(runnable);
+            thread.start();
+            return thread;
+        };
     }
 
     /**
@@ -153,7 +162,7 @@ public class CrazyLambdas {
      * @return a runnable consumer
      */
     public static Consumer<Runnable> newThreadRunnableConsumer() {
-        throw new ExerciseNotCompletedException();
+        return runnable -> new Thread(runnable).start();
     }
 
     /**
@@ -163,7 +172,11 @@ public class CrazyLambdas {
      * @return a function that transforms runnable into a thread supplier
      */
     public static Function<Runnable, Supplier<Thread>> runnableToThreadSupplierFunction() {
-        throw new ExerciseNotCompletedException();
+        return runnable -> () -> {
+            Thread thread = new Thread(runnable);
+            thread.start();
+            return thread;
+        };
     }
 
     /**
@@ -176,7 +189,8 @@ public class CrazyLambdas {
      * @return a binary function that receiver predicate and function and compose them to create a new function
      */
     public static BiFunction<IntUnaryOperator, IntPredicate, IntUnaryOperator> functionToConditionalFunction() {
-        throw new ExerciseNotCompletedException();
+//        a -> -a, a -> a < 0
+        return (operator, predicate) -> operand -> predicate.test(operand) ? operator.applyAsInt(operand) : operand;
     }
 
     /**
@@ -187,7 +201,7 @@ public class CrazyLambdas {
      * @return a high-order function that fetches a function from a function map by a given name or returns identity()
      */
     public static BiFunction<Map<String, IntUnaryOperator>, String, IntUnaryOperator> functionLoader() {
-        throw new ExerciseNotCompletedException();
+        return  (Map<String, IntUnaryOperator> map, String str) -> map.getOrDefault(str, identity()) ;
     }
 
     /**
@@ -196,7 +210,7 @@ public class CrazyLambdas {
      * @return a supplier instance
      */
     public static Supplier<Supplier<Supplier<String>>> trickyWellDoneSupplier() {
-        throw new ExerciseNotCompletedException();
+        return () -> () -> () -> "WELL DONE!";
     }
 }
 

@@ -251,12 +251,12 @@ class ArrayListTest {
         fillTestArray(15, 69, 58, 78, 100);
         Object[] internalArray = getTestArray();
 
-        int removedElement = arrayList.remove(2);
+        int removedElement = arrayList.remove(0);
 
         assertThat(internalArray[2]).isEqualTo(78);
-        assertThat(internalArray[1]).isEqualTo(69);
+        assertThat(internalArray[1]).isEqualTo(58);
         assertThat(getTestSize()).isEqualTo(4);
-        assertThat(removedElement).isEqualTo(58);
+        assertThat(removedElement).isEqualTo(15);
     }
 
     @Test

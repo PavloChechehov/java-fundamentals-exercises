@@ -28,6 +28,33 @@ import com.bobocode.util.ExerciseNotCompletedException;
  */
 public class HashTable<K, V> implements Map<K, V> {
 
+    private static final int DEFAULT_CAPACITY = 8;
+
+    static class Node<K, V> {
+        K key;
+        V value;
+        Node<K, V> next;
+
+        public Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    Node<K, V>[] table;
+    int size;
+
+    public HashTable() {
+        table = new Node[DEFAULT_CAPACITY];
+    }
+
+    public HashTable(int initCapacity) {
+        if (initCapacity < 0) {
+            throw new IllegalArgumentException("Not allow negative value");
+        }
+        table = new Node[initCapacity];
+    }
+
     /**
      * This method is a critical part of the hast table. The main idea is that having a key, you can calculate its index
      * in the array using the hash code. Since the computation is done in constant time (O(1)), it's faster than
@@ -43,7 +70,7 @@ public class HashTable<K, V> implements Map<K, V> {
      * @return array index of the given key
      */
     public static int calculateIndex(Object key, int tableCapacity) {
-        throw new ExerciseNotCompletedException(); // todo:
+        return Math.abs(key.hashCode()) % tableCapacity;
     }
 
     /**
@@ -59,7 +86,33 @@ public class HashTable<K, V> implements Map<K, V> {
      */
     @Override
     public V put(K key, V value) {
-        throw new ExerciseNotCompletedException(); // todo:
+        var index = calculateIndex(key, table.length);
+        var newNode = new Node<K, V>(key, value);
+        if (table[index] == null) {
+            table[index] = newNode;
+        } else {
+            var node = table[index];
+
+            while (node.next != null && !node.key.equals(key)) {
+//                if (node.key.equals(key)) {
+//                    var oldValue = node.value;
+//                    node.value = value;
+//                    return oldValue;
+//                }
+                node = node.next;
+            }
+
+            if (node.key.equals(key)) {
+                var oldValue = node.value;
+                node.value = value;
+                return oldValue;
+            }
+
+            node.next = newNode;
+        }
+        size++;
+        return null;
+
     }
 
     /**
@@ -71,7 +124,16 @@ public class HashTable<K, V> implements Map<K, V> {
      */
     @Override
     public V get(K key) {
-        throw new ExerciseNotCompletedException(); // todo:
+        var index = calculateIndex(key, table.length);
+        var node = table[index];
+        while (node != null) {
+            if (node.key.equals(key)) {
+                return node.value;
+            } else {
+                node = node.next;
+            }
+        }
+        return null;
     }
 
     /**
@@ -82,7 +144,16 @@ public class HashTable<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsKey(K key) {
-        throw new ExerciseNotCompletedException(); // todo:
+        var index = calculateIndex(key, table.length);
+        var node = table[index];
+        while (node != null) {
+            if (node.key.equals(key)) {
+                return true;
+            } else {
+                node = node.next;
+            }
+        }
+        return false;
     }
 
     /**
@@ -150,7 +221,17 @@ public class HashTable<K, V> implements Map<K, V> {
      */
     @Override
     public String toString() {
-        throw new ExerciseNotCompletedException(); // todo:
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < table.length; i++) {
+            Node<K, V> node = table[i];
+            sb.append(i).append(": ");
+            while (node != null) {
+                sb.append(node.key).append("=").append(node.value);
+                node = node.next;
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     /**
